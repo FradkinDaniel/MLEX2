@@ -24,7 +24,7 @@ def addOnesColum(D1: list):
     return D1
 
 def sigmoid(z):
-    if isinstance(z, int):
+    if isinstance(z, (int ,float)):
         return sigmoid_int(z)
 
 
@@ -49,7 +49,7 @@ def computeCost(predicted, realValue):
         predicted = 0.0001
     if predicted == 1:
         predicted = 0.999
-    return  -realValue * math.log(predicted) - (1 - realValue) * math.log(1 - predicted)
+    return -realValue * math.log(predicted) - (1.0 - realValue) * math.log(1.0 - predicted)
 
 def compute_grandiant(predicted, example:list,  y):
     gradients = [0.0, 0.0, 0.0]
@@ -77,5 +77,5 @@ def computeCostAndGradient(D: list, Y:list , Hypothesis:list):
 
 
 if __name__ == '__main__':
-    mat = [[-1, -2], [-3,-4,-5], [-99,-97]]
+    mat = [[-1, -2], [-3,-4], [-99,-97]]
     print(sigmoid(mat))
