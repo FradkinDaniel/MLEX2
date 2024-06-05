@@ -10,42 +10,68 @@ def load_data(filename):
             line = line.rstrip('\n')
             if not line:
                 continue
-            columns = line.strip().split()
+            columns = line.strip().split(',')
             last_column = columns.pop()
+            last_column = last_column.split()[0]
             matrixD.append([float(col) for col in columns])
-            matrixY.append([float(last_column)])
+            matrixY.append(float(last_column))
 
     return addOnesColum(matrixD),matrixY
+
 def addOnesColum(D1: list):
     for i in range(D1.__len__()):
-        D1[i] = [1, D1[i]]
+        D1[i] = [1] + D1[i]
     return D1
+
 def sigmoid(z):
     if z is list:
         return sigmoid_matrix(z)
     else:
         return sigmoid_int(z)
+
 def sigmoid_int(z):
     return 1/(1+math.exp(-z))
+
 def sigmoid_matrix(matrix):
     return [[sigmoid(x) for x in row] for row in matrix]
-def predictValue(Example, Hypothesis):
-    prediction = 0
+
+def predictValue(Example:list, Hypothesis:list):
+    prediction = 0.0
     for i in range(Example.__len__()):
         prediction += Example[i] * Hypothesis[i]
-    resulte =sigmoid(prediction)
-    if resulte==0:
-        resulte += 0.000000001
-    if resulte==1:
-        resulte -= 0.000000001
-    return resulte
-def computeCost(example:list ,prediction,Hypothesis):
-    return  -prediction * math.log(predictValue(example,Hypothesis)) - (1 - prediction) * math.log(1 - predictValue(example,Hypothesis))
-def compute_grandiant()
+    result = sigmoid(prediction)
+    return result
+
+def computeCost(predicted, realValue):
+    if predicted == 0:
+        predicted = 0.0001
+    if predicted == 1:
+        predicted = 0.999
+    return  -realValue * math.log(predicted) - (1 - realValue) * math.log(1 - predicted)
+
+def compute_grandiant(predicted, example:list,  y):
+    gradients = [0.0, 0.0, 0.0]
+    for i in range(example.__len__()):
+        gradients[i] = (predicted - y) * example[i]
+
+    return gradients
+
 
 def computeCostAndGradient(D: list, Y:list , Hypothesis:list):
-    error = list
-    for i in range(D.):
-        predictValue(row,Hypothesis)
+    J = 0.0
+    gradients = [0.0, 0.0, 0.0]
+    for i in range(D.__len__()):
+        predicted = predictValue(D[i],Hypothesis)
+        J += computeCost(predicted, Y[i])
+        temp_grad = compute_grandiant(predicted, D[i], Y[i])
+        for j in range(gradients.__len__()):
+            gradients[j] += temp_grad[j]
 
-if __name__ == '__main__':
+    J /= D.__len__()
+    for i in range(gradients.__len__()):
+        gradients[i] /= D.__len__()
+
+    return J, gradients
+
+
+#if __name__ == '__main__':
