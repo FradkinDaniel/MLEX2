@@ -24,10 +24,12 @@ def addOnesColum(D1: list):
     return D1
 
 def sigmoid(z):
-    if isinstance(z, list):
-        return sigmoid_matrix(z)
-    else:
+    if isinstance(z, int):
         return sigmoid_int(z)
+
+
+    else:
+        return sigmoid_matrix(z)
 
 def sigmoid_int(z):
     return 1/(1+math.exp(-z))
@@ -75,5 +77,5 @@ def computeCostAndGradient(D: list, Y:list , Hypothesis:list):
 
 
 if __name__ == '__main__':
-    mat = [[-329758, -3415125], [-93475,-2324324,-2142314], [-23984,-3215315]]
+    mat = [[-1, -2], [-3,-4,-5], [-99,-97]]
     print(sigmoid(mat))
