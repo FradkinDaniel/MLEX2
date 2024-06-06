@@ -60,6 +60,9 @@ def compute_grandiant(predicted, example:list,  y):
 
 
 def computeCostAndGradient(D: list, Y:list , Hypothesis:list):
+    return computeRegularizedCostAndGradient(D,Y,Hypothesis,0)
+
+def computeRegularizedCostAndGradient(D: list, Y:list , Hypothesis:list, lamda):
     J = 0.0
     gradients = [0.0, 0.0, 0.0]
     for i in range(D.__len__()):
@@ -70,12 +73,23 @@ def computeCostAndGradient(D: list, Y:list , Hypothesis:list):
             gradients[j] += temp_grad[j]
 
     J /= D.__len__()
+    for i in gradients:
+        print(i)
+    regularizetionForCost = 0
     for i in range(gradients.__len__()):
+        if i != 0:
+            regularizetionForCost += pow(gradients[i], 2)
+            print(regularizetionForCost)
+            regularizetionForGrandiant = gradients[i] * lamda
+            gradients[i] += regularizetionForGrandiant
         gradients[i] /= D.__len__()
-
+    regularizetionForCost *= lamda / (2 * D.__len__())
+    J += regularizetionForCost
+    for i in gradients:
+        print(i)
     return J, gradients
 
 
 if __name__ == '__main__':
-    mat = [[-1, -2], [-3,-4], [-99,-97]]
-    print(sigmoid(mat))
+    D, Y = load_data("ex2data1.txt")
+    J,grand = computeRegularizedCostAndGradient(D, Y, [-10, 0.8, 0.08],1)
