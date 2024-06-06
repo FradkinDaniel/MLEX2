@@ -97,8 +97,9 @@ def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001):
     Data, Y = load_data(filename)
 
     Hypothesis = [-8, 2, -0.5]
+    print("Initial Hypothesis:", Hypothesis)
 
-    plot_decision_boundary(Hypothesis, Data, Y)
+    #plot_decision_boundary(Hypothesis, Data, Y)
     temination_reason = ""
 
     while(True):
@@ -121,6 +122,7 @@ def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001):
             break
 
         iter+=1
+
     print(temination_reason)
     return Costs, Hypothesis
 
@@ -159,9 +161,15 @@ def plot_decision_boundary(theta, X, y):
     if X.shape[1] <= 3:
         plot_x = np.array([np.min(X[:, 1]) - 2, np.max(X[:, 1]) + 2])
         plot_y = (-1. / theta[2]) * (theta[1] * plot_x + theta[0])
+
+        # Debug prints
+        print("theta:", theta)
+        print("plot_x:", plot_x)
+        print("plot_y:", plot_y)
+
         plt.plot(plot_x, plot_y, 'purple', label='Decision Boundary')
         plt.legend()
-        plt.axis([20, 100, 20, 100])
+        plt.axis([np.min(X[:, 1]) - 2, np.max(X[:, 1]) + 2, np.min(X[:, 2]) - 2, np.max(X[:, 2]) + 2])
     else:
         u = np.linspace(-1, 1.5, 50)
         v = np.linspace(-1, 1.5, 50)
@@ -172,10 +180,14 @@ def plot_decision_boundary(theta, X, y):
                 z[i, j] = np.dot(map_feature(np.array([u[i]]), np.array([v[j]])), theta)
 
         z = z.T
+
+        # Debug print
+        print("z shape:", z.shape)
+
         plt.contour(u, v, z, levels=[0], linewidths=2)
 
     plt.show()
 
 
 if __name__ == '__main__':
-    gradientDescent("ex2data1.txt", )
+    gradientDescent("ex2data1.txt")
