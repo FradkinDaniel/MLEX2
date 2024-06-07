@@ -89,6 +89,7 @@ def computeRegularizedCostAndGradient(D: list, Y:list , Hypothesis:list, lamda):
 def updateHypothesis(Hypothesis:list, alpha, Gradient:list):
     for i in range(Hypothesis.__len__()):
         Hypothesis[i] -= alpha * Gradient[i]
+    return Hypothesis
 
 def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001):
     cost_J = float('inf')
@@ -97,17 +98,12 @@ def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001):
     Data, Y = load_data(filename)
 
     Hypothesis = [-8, 2, -0.5]
-    print("Initial Hypothesis:", Hypothesis)
 
     #plot_decision_boundary(Hypothesis, Data, Y)
     temination_reason = ""
 
     while(True):
         cost, gradient = computeRegularizedCostAndGradient(Data, Y, Hypothesis, 1000)
-
-        if(cost_J<cost):
-            temination_reason = "Gradient descent terminating after %d iterations, new cost is higher(%f) from previous cost(%f)"% (iter + 1, cost, cost_J)
-            break
 
         Costs.append(cost)
         Hypothesis = updateHypothesis(Hypothesis, alpha, gradient)
@@ -122,7 +118,7 @@ def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001):
             break
 
         iter+=1
-
+    plot_decision_boundary(Hypothesis, Data, Y)
     print(temination_reason)
     return Costs, Hypothesis
 
