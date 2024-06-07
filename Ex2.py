@@ -99,15 +99,14 @@ def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001):
 
     Hypothesis = [-8, 2, -0.5]
 
-    #plot_decision_boundary(Hypothesis, Data, Y)
+    plot_decision_boundary(Hypothesis, Data, Y)
     temination_reason = ""
 
     while(True):
-        cost, gradient = computeRegularizedCostAndGradient(Data, Y, Hypothesis, 1000)
+        cost, gradient = computeRegularizedCostAndGradient(Data, Y, Hypothesis, 900)
 
         Costs.append(cost)
         Hypothesis = updateHypothesis(Hypothesis, alpha, gradient)
-        cost_J = cost
 
         if (iter > max_iter):
             temination_reason = "Gradient descent terminating after %d iterations (max_iter)"% (iter + 1)
@@ -118,8 +117,9 @@ def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001):
             break
 
         iter+=1
-    plot_decision_boundary(Hypothesis, Data, Y)
+
     print(temination_reason)
+    plot_decision_boundary(Hypothesis, Data, Y)
     return Costs, Hypothesis
 
 
@@ -186,4 +186,9 @@ def plot_decision_boundary(theta, X, y):
 
 
 if __name__ == '__main__':
-    gradientDescent("ex2data1.txt")
+    Costs, Hypothesis = gradientDescent("ex2data1.txt")
+    plt.plot(Costs)
+    plt.xlabel('Iterations')
+    plt.ylabel('Cost')
+    plt.title('Cost vs Iterations')
+    plt.show()
