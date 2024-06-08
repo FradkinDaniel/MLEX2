@@ -29,7 +29,6 @@ def sigmoid(z):
     if isinstance(z, (int ,float)):
         return sigmoid_int(z)
 
-
     else:
         return sigmoid_matrix(z)
 
@@ -50,13 +49,13 @@ def computeCost(predicted, realValue):
     if predicted == 0:
         predicted = 0.0001
     if predicted == 1:
-        predicted = 0.999
+        predicted = 0.9999
     return -realValue * math.log(predicted) - (1.0 - realValue) * math.log(1.0 - predicted)
 
-def compute_grandiant(predicted, example:list,  y):
+def compute_grandiant(error, example:list):
     gradients = [0.0, 0.0, 0.0]
     for i in range(example.__len__()):
-        gradients[i] = (predicted - y) * example[i]
+        gradients[i] = (error) * example[i]
 
     return gradients
 
@@ -70,7 +69,8 @@ def computeRegularizedCostAndGradient(D: list, Y:list , Hypothesis:list, lamda):
     for i in range(D.__len__()):
         predicted = predictValue(D[i],Hypothesis)
         J += computeCost(predicted, Y[i])
-        temp_grad = compute_grandiant(predicted, D[i], Y[i])
+        error = predicted - Y[i]
+        temp_grad = compute_grandiant(error, D[i])
         for j in range(gradients.__len__()):
             gradients[j] += temp_grad[j]
 
@@ -91,8 +91,7 @@ def updateHypothesis(Hypothesis:list, alpha, Gradient:list):
         Hypothesis[i] -= alpha * Gradient[i]
     return Hypothesis
 
-def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001):
-    cost_J = float('inf')
+def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001, lambada=1000):
     iter = 1
     Costs = []
     Data, Y = load_data(filename)
@@ -103,7 +102,7 @@ def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001):
     temination_reason = ""
 
     while(True):
-        cost, gradient = computeRegularizedCostAndGradient(Data, Y, Hypothesis, 900)
+        cost, gradient = computeRegularizedCostAndGradient(Data, Y, Hypothesis, lambada)
 
         Costs.append(cost)
         Hypothesis = updateHypothesis(Hypothesis, alpha, gradient)
@@ -186,9 +185,11 @@ def plot_decision_boundary(theta, X, y):
 
 
 if __name__ == '__main__':
-    Costs, Hypothesis = gradientDescent("ex2data1.txt")
+    Costs, Hypothesis = gradientDescent("ex2data1.txt", 1000)
+    print(Costs[-1])
     plt.plot(Costs)
     plt.xlabel('Iterations')
     plt.ylabel('Cost')
     plt.title('Cost vs Iterations')
     plt.show()
+
