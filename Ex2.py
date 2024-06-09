@@ -18,7 +18,7 @@ def load_data(filename):
             matrixD.append([float(col) for col in columns])
             matrixY.append(float(last_column))
 
-    return addOnesColum(matrixD),matrixY
+    return matrixD ,matrixY
 
 def addOnesColum(D1: list):
     for i in range(D1.__len__()):
@@ -28,6 +28,7 @@ def addOnesColum(D1: list):
 def sigmoid(z):
     if isinstance(z, (int ,float)):
         return sigmoid_int(z)
+
 
     else:
         return sigmoid_matrix(z)
@@ -49,13 +50,13 @@ def computeCost(predicted, realValue):
     if predicted == 0:
         predicted = 0.0001
     if predicted == 1:
-        predicted = 0.9999
+        predicted = 0.999
     return -realValue * math.log(predicted) - (1.0 - realValue) * math.log(1.0 - predicted)
 
-def compute_grandiant(error, example:list):
+def compute_grandiant(predicted, example:list,  y):
     gradients = [0.0, 0.0, 0.0]
     for i in range(example.__len__()):
-        gradients[i] = (error) * example[i]
+        gradients[i] = (predicted - y) * example[i]
 
     return gradients
 
@@ -69,8 +70,7 @@ def computeRegularizedCostAndGradient(D: list, Y:list , Hypothesis:list, lamda):
     for i in range(D.__len__()):
         predicted = predictValue(D[i],Hypothesis)
         J += computeCost(predicted, Y[i])
-        error = predicted - Y[i]
-        temp_grad = compute_grandiant(error, D[i])
+        temp_grad = compute_grandiant(predicted, D[i], Y[i])
         for j in range(gradients.__len__()):
             gradients[j] += temp_grad[j]
 
@@ -91,14 +91,13 @@ def updateHypothesis(Hypothesis:list, alpha, Gradient:list):
         Hypothesis[i] -= alpha * Gradient[i]
     return Hypothesis
 
-def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001, lambada=1000):
+def gradientDescent(Data, Y, Hypothesis, alpha=0.001, max_iter=1000, threshold=0.0001, lambada=1000):
     iter = 1
     Costs = []
-    Data, Y = load_data(filename)
 
-    Hypothesis = [-8, 2, -0.5]
-
+    print("Hypothesis before running the algorithm: ")
     plot_decision_boundary(Hypothesis, Data, Y)
+    print()
     temination_reason = ""
 
     while(True):
@@ -115,10 +114,13 @@ def gradientDescent(filename, alpha=0.001, max_iter=1000, threshold=0.0001, lamb
             temination_reason = "Gradient descent terminating after %d iterations. Improvement was: %f – below threshold (%f)"% (iter + 1, abs(Costs[-1] - Costs[-2]), threshold)
             break
 
-        iter+=1
+        iter += 1
+
+    print("Hypothesis after running the algorithm: ")
+    plot_decision_boundary(Hypothesis, Data, Y)
+    print()
 
     print(temination_reason)
-    plot_decision_boundary(Hypothesis, Data, Y)
     return Costs, Hypothesis
 
 
@@ -185,11 +187,13 @@ def plot_decision_boundary(theta, X, y):
 
 
 if __name__ == '__main__':
-    Costs, Hypothesis = gradientDescent("ex2data1.txt", 1000)
-    print(Costs[-1])
-    plt.plot(Costs)
+    Data, Y = load_data("ex2data1.txt")
+    Data = addOnesColum(Data)
+
+    costs, hypothesis = gradientDescent(Data, Y, [-8, 2, -0.5])
+
+    plt.plot(costs)
     plt.xlabel('Iterations')
     plt.ylabel('Cost')
     plt.title('Cost vs Iterations')
     plt.show()
-
